@@ -21,10 +21,12 @@ html, body {
   height: 100%;
   width: 100%;
   overflow: hidden;
+  overscroll-behavior: none;
   background: var(--bg-0);
   color: var(--text);
-  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, system-ui, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'SF Pro Display', 'Segoe UI', Roboto, system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
+  touch-action: none;
 }
 
 /* ---------- Ekran (display) ---------- */
@@ -33,7 +35,10 @@ html, body {
   position: relative;
   display: flex;
   flex-direction: column;
+  /* 100vh yerine: mobilde adres çubuğu gizlenip görününce ekranın kaymasını önler */
   height: 100vh;
+  height: calc(var(--vh, 1vh) * 100);
+  height: 100dvh;
   width: 100vw;
   background: var(--bg-1);
   overflow: hidden;
@@ -344,9 +349,11 @@ html, body {
 }
 
 /* hava durumu */
+.weather-slide { gap: clamp(6px, 1.1vh, 14px); }
+
 .weather-temp {
-  font-size: clamp(56px, 15vh, 150px);
-  font-weight: 800;
+  font-size: clamp(48px, 11vh, 108px);
+  font-weight: 700;
   line-height: 1;
   background: linear-gradient(100deg, #ffffff 30%, rgba(var(--accent2-rgb), 0.9) 45%, #ffffff 60%);
   background-size: 260% 100%;
@@ -354,6 +361,7 @@ html, body {
   background-clip: text;
   color: transparent;
   animation: shine 6s ease-in-out infinite;
+  margin-top: -0.4vh;
 }
 
 @keyframes shine {
@@ -362,8 +370,256 @@ html, body {
   100% { background-position: -60% 0; }
 }
 
-.weather-label { font-size: clamp(17px, 3.4vh, 32px); color: var(--text-dim); }
-.weather-city { font-size: clamp(13px, 2.4vh, 21px); color: var(--text-dim); opacity: 0.8; }
+.weather-label {
+  font-size: clamp(14px, 2.3vh, 22px);
+  color: var(--text-dim);
+  margin-top: -0.6vh;
+}
+
+/* hissedilen / nem satırı */
+.weather-stats {
+  display: flex;
+  align-items: center;
+  gap: clamp(14px, 2.2vw, 28px);
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  padding: clamp(8px, 1.2vh, 14px) clamp(20px, 3vw, 32px);
+  border-radius: 999px;
+}
+
+.w-stat { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.w-stat-label { font-size: clamp(10px, 1.5vh, 13px); color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; }
+.w-stat-value { font-size: clamp(15px, 2.2vh, 20px); font-weight: 700; }
+.w-stat-sep { width: 1px; height: clamp(20px, 3vh, 30px); background: rgba(255,255,255,0.15); }
+
+/* 5-6 günlük tahmin şeridi */
+.forecast-strip {
+  display: flex;
+  justify-content: center;
+  gap: clamp(4px, 1vw, 14px);
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border-radius: 22px;
+  padding: clamp(10px, 1.6vh, 18px) clamp(8px, 1.4vw, 16px);
+  max-width: 96vw;
+  overflow: hidden;
+}
+
+.forecast-day {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-width: clamp(38px, 6.5vw, 60px);
+}
+
+.fd-label { font-size: clamp(10px, 1.5vh, 14px); color: var(--text-dim); font-weight: 600; }
+.fd-icon { font-size: clamp(16px, 2.6vh, 26px); }
+.fd-max { font-size: clamp(12px, 1.9vh, 17px); font-weight: 700; }
+.fd-min { font-size: clamp(10px, 1.6vh, 15px); color: var(--text-dim); }
+
+/* ---- animasyonlu hava durumu ikonu ---- */
+.weather-icon {
+  position: relative;
+  width: clamp(84px, 13vh, 150px);
+  height: clamp(84px, 13vh, 150px);
+  margin-bottom: 2px;
+}
+
+.w-sun, .w-cloud, .w-fog, .w-bolt, .w-rain, .w-snow { display: none; }
+
+.w-sun {
+  position: absolute;
+  inset: 8%;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #ffe58a, #ffb200 70%);
+  box-shadow: 0 0 40px 6px rgba(255, 178, 0, 0.55);
+  animation: sunPulse 4s ease-in-out infinite;
+}
+
+.w-sun::before {
+  content: '';
+  position: absolute;
+  inset: -35%;
+  border-radius: 50%;
+  background:
+    repeating-conic-gradient(from 0deg, rgba(255,200,80,0.55) 0deg 4deg, transparent 4deg 18deg);
+  -webkit-mask: radial-gradient(circle, transparent 58%, #000 60%, #000 72%, transparent 74%);
+  mask: radial-gradient(circle, transparent 58%, #000 60%, #000 72%, transparent 74%);
+  animation: spinGlow 14s linear infinite;
+}
+
+@keyframes sunPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.06); }
+}
+
+.w-cloud {
+  position: absolute;
+  width: 78%;
+  height: 46%;
+  left: 10%;
+  border-radius: 40% 40% 45% 45% / 60% 60% 40% 40%;
+  background: linear-gradient(155deg, #ffffff, #cfd8e3);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.25);
+}
+
+.w-cloud::before, .w-cloud::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  background: inherit;
+}
+
+.w-cloud1 { bottom: 18%; z-index: 2; }
+.w-cloud1::before { width: 46%; height: 90%; left: 6%; top: -45%; }
+.w-cloud1::after { width: 40%; height: 75%; right: 8%; top: -30%; }
+
+.w-cloud2 {
+  bottom: 10%;
+  width: 60%;
+  height: 34%;
+  left: 26%;
+  opacity: 0.7;
+  filter: brightness(0.92);
+  z-index: 1;
+}
+.w-cloud2::before { width: 40%; height: 85%; left: 4%; top: -40%; }
+.w-cloud2::after { width: 36%; height: 70%; right: 6%; top: -28%; }
+
+@keyframes cloudDrift1 {
+  0%, 100% { transform: translateX(-4%); }
+  50% { transform: translateX(4%); }
+}
+@keyframes cloudDrift2 {
+  0%, 100% { transform: translateX(5%); }
+  50% { transform: translateX(-5%); }
+}
+
+.w-fog {
+  position: absolute;
+  inset: 12% 4%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+}
+.w-fog span {
+  display: block;
+  height: 14%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.65), transparent);
+}
+.w-fog span:nth-child(1) { animation: fogDrift 6s ease-in-out infinite; }
+.w-fog span:nth-child(2) { animation: fogDrift 7s ease-in-out infinite reverse; }
+.w-fog span:nth-child(3) { animation: fogDrift 5.5s ease-in-out infinite; }
+@keyframes fogDrift {
+  0%, 100% { transform: translateX(-12%); opacity: 0.6; }
+  50% { transform: translateX(12%); opacity: 1; }
+}
+
+.w-bolt {
+  position: absolute;
+  bottom: 6%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: clamp(20px, 3.4vh, 34px);
+  z-index: 3;
+  animation: boltFlash 2.6s ease-in-out infinite;
+}
+@keyframes boltFlash {
+  0%, 40%, 100% { opacity: 0; }
+  42%, 46% { opacity: 1; }
+  48% { opacity: 0.2; }
+  50% { opacity: 1; }
+  55% { opacity: 0; }
+}
+
+.w-rain {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+}
+.w-rain .drop {
+  position: absolute;
+  top: 52%;
+  width: 3px;
+  height: 16%;
+  border-radius: 2px;
+  background: linear-gradient(180deg, rgba(120,190,255,0), rgba(120,190,255,0.9));
+  animation: dropFall 1s linear infinite;
+}
+.w-rain .drop:nth-child(1) { left: 18%; animation-delay: 0s; }
+.w-rain .drop:nth-child(2) { left: 32%; animation-delay: 0.2s; }
+.w-rain .drop:nth-child(3) { left: 46%; animation-delay: 0.4s; }
+.w-rain .drop:nth-child(4) { left: 58%; animation-delay: 0.1s; }
+.w-rain .drop:nth-child(5) { left: 70%; animation-delay: 0.35s; }
+.w-rain .drop:nth-child(6) { left: 82%; animation-delay: 0.5s; }
+@keyframes dropFall {
+  0% { transform: translateY(-10%); opacity: 0; }
+  20% { opacity: 1; }
+  85% { opacity: 1; }
+  100% { transform: translateY(90%); opacity: 0; }
+}
+
+.w-snow {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+}
+.w-snow .flake {
+  position: absolute;
+  top: 50%;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 4px rgba(255,255,255,0.8);
+  animation: flakeFall 3.4s linear infinite;
+}
+.w-snow .flake:nth-child(1) { left: 12%; animation-delay: 0s; }
+.w-snow .flake:nth-child(2) { left: 24%; animation-delay: 0.6s; }
+.w-snow .flake:nth-child(3) { left: 36%; animation-delay: 1.2s; }
+.w-snow .flake:nth-child(4) { left: 50%; animation-delay: 0.3s; }
+.w-snow .flake:nth-child(5) { left: 62%; animation-delay: 1.6s; }
+.w-snow .flake:nth-child(6) { left: 74%; animation-delay: 0.9s; }
+.w-snow .flake:nth-child(7) { left: 86%; animation-delay: 2s; }
+.w-snow .flake:nth-child(8) { left: 94%; animation-delay: 1.4s; }
+@keyframes flakeFall {
+  0% { transform: translate(0, -10%); opacity: 0; }
+  15% { opacity: 1; }
+  85% { opacity: 1; }
+  100% { transform: translate(14px, 95%); opacity: 0; }
+}
+
+/* koşula göre parçaları göster */
+.cond-clear .w-sun { display: block; }
+
+.cond-partly .w-sun { display: block; transform: scale(0.8) translate(10%, -10%); }
+.cond-partly .w-cloud1 { display: block; animation: cloudDrift1 7s ease-in-out infinite; }
+.cond-partly .w-cloud2 { display: block; animation: cloudDrift2 8s ease-in-out infinite; }
+
+.cond-cloudy .w-cloud1 { display: block; animation: cloudDrift1 7s ease-in-out infinite; }
+.cond-cloudy .w-cloud2 { display: block; animation: cloudDrift2 8s ease-in-out infinite; }
+
+.cond-fog .w-cloud1 { display: block; opacity: 0.7; }
+.cond-fog .w-fog { display: flex; }
+
+.cond-rain .w-cloud1 { display: block; animation: cloudDrift1 7s ease-in-out infinite; }
+.cond-rain .w-cloud2 { display: block; animation: cloudDrift2 8s ease-in-out infinite; }
+.cond-rain .w-rain { display: block; }
+
+.cond-snow .w-cloud1 { display: block; animation: cloudDrift1 7s ease-in-out infinite; }
+.cond-snow .w-cloud2 { display: block; animation: cloudDrift2 8s ease-in-out infinite; }
+.cond-snow .w-snow { display: block; }
+
+.cond-thunder .w-cloud1 { display: block; animation: cloudDrift1 7s ease-in-out infinite; filter: brightness(0.75); }
+.cond-thunder .w-cloud2 { display: block; animation: cloudDrift2 8s ease-in-out infinite; filter: brightness(0.7); }
+.cond-thunder .w-rain { display: block; }
+.cond-thunder .w-bolt { display: block; }
 
 /* sağlık ipucu */
 .healthtip-text {
@@ -374,6 +630,79 @@ html, body {
   position: relative;
   padding: 0 1vmin;
 }
+
+/* yerleşik kampanya (promo) slaytları */
+.promo-slide { gap: clamp(8px, 1.6vh, 20px); position: relative; padding-bottom: clamp(50px, 8vh, 74px); }
+
+.promo-icon-wrap {
+  width: clamp(140px, 24vh, 260px);
+  height: clamp(140px, 24vh, 260px);
+  filter: drop-shadow(0 14px 30px rgba(0,0,0,0.35));
+  animation: iconFloat 5s ease-in-out infinite;
+}
+.promo-icon { width: 100%; height: 100%; }
+
+.promo-headline {
+  font-size: clamp(24px, 4.6vh, 46px);
+  font-weight: 800;
+  max-width: min(90vw, 720px);
+  line-height: 1.15;
+}
+
+.promo-sub {
+  font-size: clamp(14px, 2.3vh, 24px);
+  color: var(--text-dim);
+  max-width: min(88vw, 620px);
+  line-height: 1.4;
+}
+
+.promo-footer {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(14px, 2.6vh, 26px);
+  transform: translateX(-50%);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  padding: clamp(8px, 1.3vh, 12px) clamp(16px, 2.4vw, 26px);
+  border-radius: 999px;
+  font-size: clamp(12px, 1.8vh, 17px);
+  color: var(--text-dim);
+  max-width: 92vw;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pf-name { font-weight: 800; color: var(--text); }
+.pf-dot { opacity: 0.4; }
+.pf-phone { font-weight: 700; color: var(--text); }
+
+/* kişi + ürün birlikte (grip aşısı, hijyen) */
+.promo-person-layout { gap: clamp(4px, 1vh, 14px); }
+
+.promo-visual {
+  position: relative;
+  width: clamp(160px, 30vh, 280px);
+  filter: drop-shadow(0 16px 30px rgba(0,0,0,0.4));
+}
+.promo-person { width: 100%; height: auto; display: block; animation: iconFloat 6s ease-in-out infinite; }
+
+.promo-icon-float {
+  position: absolute;
+  top: 6%;
+  right: -14%;
+  width: 40%;
+  animation: iconFloat 4s ease-in-out infinite reverse;
+}
+
+.promo-text { display: flex; flex-direction: column; align-items: center; gap: 6px; }
 
 /* kampanya */
 .campaign-slide {

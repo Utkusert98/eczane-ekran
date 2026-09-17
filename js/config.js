@@ -6,6 +6,8 @@ function defaultConfig() {
   return {
     pharmacy: {
       name: 'Moda Sahil Eczanesi',
+      pharmacistName: 'Ecz. Eda Koç Sert',
+      phone: '0533 022 94 91',
       logoDataUrl: '',
       city: 'istanbul',
       district: 'kadikoy',
@@ -30,13 +32,10 @@ function defaultConfig() {
       accent2: '',
     },
     slideDuration: 14,
-    campaigns: [
-      { id: 'grip-asisi', imageDataUrl: 'assets/campaigns/grip-asisi.svg', title: '', duration: 14 },
-      { id: 'baglisiklik', imageDataUrl: 'assets/campaigns/baglisiklik.svg', title: '', duration: 14 },
-      { id: 'cilt-bakimi', imageDataUrl: 'assets/campaigns/cilt-bakimi.svg', title: '', duration: 14 },
-      { id: 'hijyen', imageDataUrl: 'assets/campaigns/hijyen.svg', title: '', duration: 14 },
-      { id: 'oksuruk-bogaz', imageDataUrl: 'assets/campaigns/oksuruk-bogaz.svg', title: '', duration: 14 },
-    ], // { id, imageDataUrl, title, duration }
+    promos: {
+      enabled: true, // yerleşik, illüstrasyonlu sağlık kampanyası slaytları (temaya göre renklenir)
+    },
+    campaigns: [], // kendi yüklediğiniz kampanya görselleri: { id, imageDataUrl, title, duration }
     healthTips: {
       enabled: false,
       useBuiltIn: true,

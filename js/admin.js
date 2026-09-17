@@ -13,9 +13,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function populateForm() {
   document.getElementById('pharmacyName').value = cfg.pharmacy.name || '';
+  document.getElementById('pharmacistName').value = cfg.pharmacy.pharmacistName || '';
+  document.getElementById('pharmacyPhone').value = cfg.pharmacy.phone || '';
   document.getElementById('city').value = cfg.pharmacy.city || '';
   document.getElementById('district').value = cfg.pharmacy.district || '';
   document.getElementById('semt').value = cfg.pharmacy.semt || '';
+  document.getElementById('promosEnabled').checked = cfg.promos.enabled;
 
   document.getElementById('dutyEnabled').checked = cfg.duty.enabled;
   document.getElementById('dutyApiKey').value = cfg.duty.apiKey || '';
@@ -89,9 +92,12 @@ function lightenColor(hex, amount) {
 
 function readFormIntoCfg() {
   cfg.pharmacy.name = document.getElementById('pharmacyName').value.trim();
+  cfg.pharmacy.pharmacistName = document.getElementById('pharmacistName').value.trim();
+  cfg.pharmacy.phone = document.getElementById('pharmacyPhone').value.trim();
   cfg.pharmacy.city = document.getElementById('city').value.trim();
   cfg.pharmacy.district = document.getElementById('district').value.trim();
   cfg.pharmacy.semt = document.getElementById('semt').value.trim();
+  cfg.promos.enabled = document.getElementById('promosEnabled').checked;
 
   cfg.duty.enabled = document.getElementById('dutyEnabled').checked;
   cfg.duty.apiKey = document.getElementById('dutyApiKey').value.trim();
