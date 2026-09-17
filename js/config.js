@@ -5,10 +5,10 @@ const STORAGE_KEY = 'eczaneEkranConfig_v2';
 function defaultConfig() {
   return {
     pharmacy: {
-      name: 'Eczanem',
+      name: 'Moda Sahil Eczanesi',
       logoDataUrl: '',
-      city: '',
-      district: '',
+      city: 'istanbul',
+      district: 'kadikoy',
     },
     duty: {
       enabled: true,
@@ -19,9 +19,9 @@ function defaultConfig() {
     },
     weather: {
       enabled: true,
-      lat: null,
-      lon: null,
-      cityLabel: '',
+      lat: 40.9793,
+      lon: 29.0339,
+      cityLabel: 'Moda, Kadıköy',
     },
     slideDuration: 14,
     campaigns: [], // { id, imageDataUrl, title, duration }

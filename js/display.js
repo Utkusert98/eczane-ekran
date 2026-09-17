@@ -166,11 +166,23 @@ function rotateSlides() {
 function scheduleNext() {
   clearTimeout(slideTimer);
   const current = slideQueue[slideIndex] || { duration: config.slideDuration };
+  const duration = current.duration || config.slideDuration;
+  runProgressBar(duration);
   slideTimer = setTimeout(() => {
     slideIndex = (slideIndex + 1) % slideQueue.length;
     renderCurrentSlide();
     scheduleNext();
-  }, (current.duration || config.slideDuration) * 1000);
+  }, duration * 1000);
+}
+
+function runProgressBar(durationSeconds) {
+  const fill = document.getElementById('progressFill');
+  if (!fill) return;
+  fill.style.transition = 'none';
+  fill.style.width = '0%';
+  void fill.offsetWidth;
+  fill.style.transition = `width ${durationSeconds}s linear`;
+  fill.style.width = '100%';
 }
 
 function renderCurrentSlide() {
@@ -194,19 +206,21 @@ function renderSlideHtml(slide) {
     case 'healthTip':
       return `
         <div class="slide healthtip-slide">
-          <div class="slide-icon">💊</div>
+          <div class="icon-badge coral">💊</div>
           <div class="slide-title">Sağlık İpucu</div>
           <div class="healthtip-text">${escapeHtml(slide.text)}</div>
         </div>`;
     case 'campaign':
       return `
         <div class="slide campaign-slide">
+          <div class="campaign-backdrop" style="background-image:url('${slide.campaign.imageDataUrl}')"></div>
           <img src="${slide.campaign.imageDataUrl}" alt="${escapeHtml(slide.campaign.title || '')}" />
           ${slide.campaign.title ? `<div class="campaign-title">${escapeHtml(slide.campaign.title)}</div>` : ''}
         </div>`;
     default:
       return `
         <div class="slide empty-slide">
+          <div class="icon-badge teal">🏥</div>
           <div class="slide-title">Eczane Ekranına Hoş Geldiniz</div>
           <div class="slide-sub">İçerik eklemek için sağ alttaki dişli simgesinden ayarlar paneline gidin.</div>
         </div>`;
@@ -217,6 +231,7 @@ function renderDutySlide() {
   if (!dutyData) {
     return `<div class="slide duty-slide"><div class="slide-title">Nöbetçi Eczane</div><div class="slide-sub">Bilgi bulunamadı.</div></div>`;
   }
+  const badge = `<div class="duty-badge"><span class="pulse-dot"></span>BUGÜN NÖBETÇİ</div>`;
   if (dutyData.source === 'api' && dutyData.list) {
     const items = dutyData.list
       .map(
@@ -230,13 +245,15 @@ function renderDutySlide() {
       .join('');
     return `
       <div class="slide duty-slide">
-        <div class="slide-title">🟢 Bugün Nöbetçi Eczaneler</div>
+        ${badge}
+        <div class="slide-title">Nöbetçi Eczaneler</div>
         <div class="duty-list">${items}</div>
       </div>`;
   }
   return `
     <div class="slide duty-slide">
-      <div class="slide-title">🟢 Bugün Nöbetçi Eczane</div>
+      ${badge}
+      <div class="slide-title">Nöbetçi Eczane</div>
       <div class="duty-card single">
         <div class="duty-name">${escapeHtml(dutyData.name || '')}</div>
         ${dutyData.address ? `<div class="duty-detail">📍 ${escapeHtml(dutyData.address)}</div>` : ''}
@@ -249,7 +266,7 @@ function renderWeatherSlide() {
   if (!weatherData) return '';
   return `
     <div class="slide weather-slide">
-      <div class="weather-icon">${weatherData.icon}</div>
+      <div class="icon-badge sky">${weatherData.icon}</div>
       <div class="weather-temp">${weatherData.temp}°C</div>
       <div class="weather-label">${escapeHtml(weatherData.label)}</div>
       ${weatherData.cityLabel ? `<div class="weather-city">${escapeHtml(weatherData.cityLabel)}</div>` : ''}
