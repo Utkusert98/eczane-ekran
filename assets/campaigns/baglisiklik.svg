@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1920">
+  <rect width="1080" height="1920" fill="#f6f1e4"/>
+  <circle cx="1080" cy="0" r="260" fill="none" stroke="#1f5c3d" stroke-width="6" opacity="0.15"/>
+  <circle cx="1080" cy="0" r="320" fill="none" stroke="#1f5c3d" stroke-width="3" opacity="0.12"/>
+  <circle cx="0" cy="1920" r="260" fill="none" stroke="#1f5c3d" stroke-width="6" opacity="0.15"/>
+  <circle cx="0" cy="1920" r="320" fill="none" stroke="#1f5c3d" stroke-width="3" opacity="0.12"/>
+
+  <rect x="300" y="130" width="480" height="58" rx="29" fill="#1f5c3d"/>
+  <text x="540" y="169" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="24" letter-spacing="3" fill="#f6f1e4" font-weight="bold">MODA SAHİL ECZANESİ</text>
+
+  <circle cx="540" cy="470" r="175" fill="#1f5c3d"/>
+  <circle cx="540" cy="470" r="175" fill="none" stroke="#d4af6a" stroke-width="6"/>
+  <g transform="translate(540,470)" fill="#d4af6a">
+    <path d="M0,-90 C40,-60 55,-15 30,20 C55,10 85,25 90,60 C60,55 35,75 30,105 C10,80 -10,80 -30,105 C-35,75 -60,55 -90,60 C-85,25 -55,10 -30,20 C-55,-15 -40,-60 0,-90 Z"/>
+  </g>
+
+  <text x="540" y="770" text-anchor="middle" font-family="Georgia, serif" font-size="72" font-weight="800" fill="#1f5c3d">BAĞIŞIKLIĞINIZI</text>
+  <text x="540" y="870" text-anchor="middle" font-family="Georgia, serif" font-size="72" font-weight="800" fill="#1f5c3d">GÜÇLENDİRİN</text>
+
+  <line x1="390" y1="930" x2="690" y2="930" stroke="#d4af6a" stroke-width="4"/>
+  <circle cx="540" cy="930" r="9" fill="#d4af6a"/>
+
+  <text x="540" y="1025" text-anchor="middle" font-family="Arial, sans-serif" font-size="40" fill="#3c5a4a">C vitamini ve çinko takviyeleri</text>
+  <text x="540" y="1080" text-anchor="middle" font-family="Arial, sans-serif" font-size="40" fill="#3c5a4a">hakkında bizden bilgi alabilirsiniz</text>
+
+  <g transform="translate(540,1780)">
+    <rect x="-6" y="-28" width="12" height="56" fill="#d4af6a"/>
+    <rect x="-28" y="-6" width="56" height="12" fill="#d4af6a"/>
+  </g>
+  <text x="540" y="1855" text-anchor="middle" font-family="Georgia, serif" font-size="28" letter-spacing="5" fill="#1f5c3d" font-weight="bold">MODA SAHİL</text>
+</svg>

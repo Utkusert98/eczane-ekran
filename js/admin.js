@@ -91,32 +91,27 @@ async function testDutyApi() {
   statusEl.className = 'status-msg';
   statusEl.textContent = 'Test ediliyor...';
 
-  const apiKey = document.getElementById('dutyApiKey').value.trim();
-  const city = document.getElementById('city').value.trim();
   const district = document.getElementById('district').value.trim();
-
-  if (!apiKey || !city) {
+  if (!district) {
     statusEl.className = 'status-msg err';
-    statusEl.textContent = 'API anahtarı ve il alanı zorunlu.';
+    statusEl.textContent = 'Önce yukarıya ilçenizi yazın (örn. Kadıköy).';
     return;
   }
 
   try {
-    const url = new URL('https://www.nosyapi.com/apiv2/service/pharmacies-on-duty');
-    url.searchParams.set('city', city);
-    if (district) url.searchParams.set('district', district);
-    url.searchParams.set('apiKey', apiKey);
-    const res = await fetch(url.toString());
+    const res = await fetch('/api/nobetci?ilce=' + encodeURIComponent(district));
     const json = await res.json();
-    if (!res.ok || json.status === 'error') {
-      throw new Error(json.message || ('HTTP ' + res.status));
+    if (json.status !== 'ok') throw new Error(json.message || 'Kaynak yanıt vermedi');
+    if (!json.pharmacies.length) {
+      statusEl.className = 'status-msg err';
+      statusEl.textContent = `"${district}" için sonuç bulunamadı — İstanbul ilçe adını doğru yazdığınızdan emin olun (örn. Kadıköy, Üsküdar).`;
+      return;
     }
-    const count = Array.isArray(json.data) ? json.data.length : 0;
     statusEl.className = 'status-msg ok';
-    statusEl.textContent = `✔ Bağlantı başarılı. ${count} nöbetçi eczane bulundu.`;
+    statusEl.textContent = `✔ Bağlantı başarılı. ${json.pharmacies.length} nöbetçi eczane bulundu (kaynak: ${json.source}).`;
   } catch (e) {
     statusEl.className = 'status-msg err';
-    statusEl.textContent = '✘ Bağlanılamadı: ' + e.message + ' (tarayıcı CORS kısıtlaması olabilir — bu durumda manuel bilgileri kullanın.)';
+    statusEl.textContent = '✘ Otomatik kaynağa ulaşılamadı: ' + e.message + '. İstanbul dışındaysanız NosyAPI anahtarı veya manuel bilgi kullanabilirsiniz.';
   }
 }
 

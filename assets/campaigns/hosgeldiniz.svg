@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1920">
+  <rect width="1080" height="1920" fill="#f6f1e4"/>
+  <circle cx="1080" cy="0" r="260" fill="none" stroke="#1f5c3d" stroke-width="6" opacity="0.15"/>
+  <circle cx="1080" cy="0" r="320" fill="none" stroke="#1f5c3d" stroke-width="3" opacity="0.12"/>
+  <circle cx="0" cy="1920" r="260" fill="none" stroke="#1f5c3d" stroke-width="6" opacity="0.15"/>
+  <circle cx="0" cy="1920" r="320" fill="none" stroke="#1f5c3d" stroke-width="3" opacity="0.12"/>
+
+  <circle cx="540" cy="640" r="230" fill="none" stroke="#1f5c3d" stroke-width="6"/>
+  <circle cx="540" cy="640" r="205" fill="none" stroke="#1f5c3d" stroke-width="2"/>
+
+  <text x="540" y="500" text-anchor="middle" font-family="Georgia, serif" font-size="34" letter-spacing="8" fill="#1f5c3d" font-weight="bold">ECZANE</text>
+
+  <g transform="translate(540,640)" fill="none" stroke="#d4af6a" stroke-width="12" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M-70,10 C-70,80 -30,120 0,130 C30,120 70,80 70,10 Z"/>
+    <line x1="-90" y1="10" x2="90" y2="10"/>
+    <line x1="30" y1="-90" x2="-20" y2="20"/>
+    <circle cx="35" cy="-95" r="14" fill="#d4af6a" stroke="none"/>
+  </g>
+
+  <text x="540" y="800" text-anchor="middle" font-family="Georgia, serif" font-size="34" letter-spacing="6" fill="#1f5c3d" font-weight="bold">ECZ. EDA KOÇ</text>
+
+  <text x="540" y="1120" text-anchor="middle" font-family="Georgia, serif" font-size="94" font-weight="800" fill="#1f5c3d">MODA SAHİL</text>
+
+  <line x1="360" y1="1180" x2="720" y2="1180" stroke="#d4af6a" stroke-width="4"/>
+  <g transform="translate(540,1180)">
+    <rect x="-6" y="-16" width="12" height="32" fill="#d4af6a"/>
+    <rect x="-16" y="-6" width="32" height="12" fill="#d4af6a"/>
+  </g>
+
+  <text x="540" y="1300" text-anchor="middle" font-family="Arial, sans-serif" font-size="42" fill="#3c5a4a">Sağlığınız için buradayız</text>
+  <text x="540" y="1360" text-anchor="middle" font-family="Arial, sans-serif" font-size="36" fill="#5a7264">Kadıköy, Moda</text>
+</svg>

@@ -77,31 +77,58 @@ async function fetchDutyPharmacy(cfg) {
     phone: cfg.duty.manualPhone || null,
     source: 'manual',
   };
-  if (!cfg.duty.apiKey || !cfg.pharmacy.city) {
-    return manual.name ? manual : null;
+
+  // 1) Ücretsiz, anahtarsız kaynak: İstanbul Eczacı Odası (kendi sunucu fonksiyonumuz üzerinden, CORS'suz)
+  if (cfg.pharmacy.district) {
+    try {
+      const res = await fetch('/api/nobetci?ilce=' + encodeURIComponent(cfg.pharmacy.district));
+      if (res.ok) {
+        const json = await res.json();
+        if (json.status === 'ok' && Array.isArray(json.pharmacies) && json.pharmacies.length) {
+          return {
+            list: json.pharmacies.slice(0, 6).map((p) => ({
+              name: p.name || 'Nöbetçi Eczane',
+              address: p.address || '',
+              phone: p.phone || '',
+            })),
+            source: 'auto',
+          };
+        }
+      }
+    } catch (e) {
+      console.warn('Ücretsiz nöbetçi eczane kaynağı alınamadı.', e);
+    }
   }
-  try {
-    const url = new URL('https://www.nosyapi.com/apiv2/service/pharmacies-on-duty');
-    url.searchParams.set('city', cfg.pharmacy.city);
-    if (cfg.pharmacy.district) url.searchParams.set('district', cfg.pharmacy.district);
-    url.searchParams.set('apiKey', cfg.duty.apiKey);
-    const res = await fetch(url.toString());
-    if (!res.ok) throw new Error('API yanıtı başarısız: ' + res.status);
-    const json = await res.json();
-    const list = Array.isArray(json.data) ? json.data : [];
-    if (!list.length) return manual.name ? manual : null;
-    return {
-      list: list.slice(0, 6).map((p) => ({
-        name: p.pharmacyName || p.name || 'Nöbetçi Eczane',
-        address: p.address || '',
-        phone: p.phone || p.phoneNumber || '',
-      })),
-      source: 'api',
-    };
-  } catch (e) {
-    console.warn('Nöbetçi eczane API alınamadı, manuel veriye dönülüyor.', e);
-    return manual.name ? manual : null;
+
+  // 2) Opsiyonel: kullanıcı NosyAPI anahtarı girdiyse (İstanbul dışı şehirler için)
+  if (cfg.duty.apiKey && cfg.pharmacy.city) {
+    try {
+      const url = new URL('https://www.nosyapi.com/apiv2/service/pharmacies-on-duty');
+      url.searchParams.set('city', cfg.pharmacy.city);
+      if (cfg.pharmacy.district) url.searchParams.set('district', cfg.pharmacy.district);
+      url.searchParams.set('apiKey', cfg.duty.apiKey);
+      const res = await fetch(url.toString());
+      if (res.ok) {
+        const json = await res.json();
+        const list = Array.isArray(json.data) ? json.data : [];
+        if (list.length) {
+          return {
+            list: list.slice(0, 6).map((p) => ({
+              name: p.pharmacyName || p.name || 'Nöbetçi Eczane',
+              address: p.address || '',
+              phone: p.phone || p.phoneNumber || '',
+            })),
+            source: 'api',
+          };
+        }
+      }
+    } catch (e) {
+      console.warn('NosyAPI alınamadı.', e);
+    }
   }
+
+  // 3) Son çare: manuel girilen bilgi
+  return manual.name ? manual : null;
 }
 
 async function fetchWeather(cfg) {
@@ -232,7 +259,7 @@ function renderDutySlide() {
     return `<div class="slide duty-slide"><div class="slide-title">Nöbetçi Eczane</div><div class="slide-sub">Bilgi bulunamadı.</div></div>`;
   }
   const badge = `<div class="duty-badge"><span class="pulse-dot"></span>BUGÜN NÖBETÇİ</div>`;
-  if (dutyData.source === 'api' && dutyData.list) {
+  if ((dutyData.source === 'api' || dutyData.source === 'auto') && dutyData.list) {
     const items = dutyData.list
       .map(
         (p) => `

@@ -1,15 +1,15 @@
 :root {
-  --primary: #00b8a9;      /* sahil / deniz yeşili-turkuaz */
-  --primary-dark: #00897b;
-  --accent: #ff9f5a;       /* gün batımı turuncu */
-  --accent2: #ffd166;      /* altın vurgusu */
-  --bg-a: #071b2e;
-  --bg-b: #0b3350;
-  --bg-c: #0a2540;
+  --primary: #2f8a5c;      /* Moda Sahil Eczanesi markasının yeşili */
+  --primary-dark: #1f5c3d;
+  --accent: #d4af6a;       /* logo altın tonu */
+  --accent2: #e8cd93;      /* açık altın vurgusu */
+  --bg-a: #0a1a12;
+  --bg-b: #123324;
+  --bg-c: #0c2419;
   --card-bg: rgba(255, 255, 255, 0.07);
-  --card-border: rgba(255, 255, 255, 0.14);
-  --text: #f5f9fb;
-  --text-dim: #a9c0cc;
+  --card-border: rgba(212, 175, 106, 0.22);
+  --text: #f6f2e6;
+  --text-dim: #b9c9bd;
 }
 
 * { box-sizing: border-box; }
@@ -34,8 +34,8 @@ html, body {
   height: 100vh;
   width: 100vw;
   background:
-    radial-gradient(circle at 15% 10%, rgba(0, 184, 169, 0.25), transparent 45%),
-    radial-gradient(circle at 85% 90%, rgba(255, 159, 90, 0.18), transparent 50%),
+    radial-gradient(circle at 15% 10%, rgba(47, 138, 92, 0.28), transparent 45%),
+    radial-gradient(circle at 85% 90%, rgba(212, 175, 106, 0.16), transparent 50%),
     linear-gradient(160deg, var(--bg-a), var(--bg-b) 55%, var(--bg-c));
   background-size: 140% 140%, 140% 140%, 100% 100%;
   animation: bgDrift 26s ease-in-out infinite alternate;
@@ -179,9 +179,9 @@ html, body {
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
 }
 
-.icon-badge.teal { box-shadow: 0 0 30px rgba(0, 184, 169, 0.45), 0 8px 24px rgba(0,0,0,0.35); }
+.icon-badge.teal { box-shadow: 0 0 30px rgba(47, 138, 92, 0.5), 0 8px 24px rgba(0,0,0,0.35); }
 .icon-badge.sky { box-shadow: 0 0 30px rgba(102, 187, 255, 0.4), 0 8px 24px rgba(0,0,0,0.35); }
-.icon-badge.coral { box-shadow: 0 0 30px rgba(255, 159, 90, 0.45), 0 8px 24px rgba(0,0,0,0.35); }
+.icon-badge.coral { box-shadow: 0 0 30px rgba(212, 175, 106, 0.5), 0 8px 24px rgba(0,0,0,0.35); }
 
 /* nöbetçi eczane */
 .duty-badge {

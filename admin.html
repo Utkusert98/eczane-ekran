@@ -41,16 +41,20 @@
         <label>Modülü göster</label>
         <input type="checkbox" id="dutyEnabled" />
       </div>
-      <div class="field">
-        <label>NosyAPI Anahtarı (opsiyonel — otomatik çekim için)</label>
-        <input type="password" id="dutyApiKey" placeholder="API anahtarınız" />
-        <div class="hint">Ücretsiz anahtar: <a href="https://www.nosyapi.com/api/nobetci-eczane" target="_blank" style="color:#7fe3a3">nosyapi.com</a>. Girilmezse aşağıdaki manuel bilgiler gösterilir.</div>
+      <div class="hint" style="margin-bottom:1.6vh">
+        İstanbul ilçeleri için nöbetçi eczane bilgisi <b>otomatik ve ücretsiz</b> olarak İstanbul Eczacı Odası'nın herkese açık kaynağından çekilir — API anahtarı girmenize gerek yok. Yukarıdaki "İlçe" alanına ilçenizi (örn. Kadıköy) yazmanız yeterli.
       </div>
-      <button class="btn secondary" id="testDutyBtn" type="button">API'yi Test Et</button>
+      <button class="btn secondary" id="testDutyBtn" type="button">Otomatik Kaynağı Test Et</button>
       <div id="dutyStatus"></div>
       <hr style="border-color:rgba(255,255,255,0.1); margin:2vh 0" />
+      <div class="hint" style="margin-bottom:1vh">İstanbul dışındaysanız veya otomatik kaynak çalışmazsa, alternatif olarak bir NosyAPI anahtarı girebilir ya da aşağıya elle bilgi yazabilirsiniz.</div>
       <div class="field">
-        <label>Manuel Nöbetçi Eczane Adı (API yoksa)</label>
+        <label>NosyAPI Anahtarı (opsiyonel, İstanbul dışı şehirler için)</label>
+        <input type="password" id="dutyApiKey" placeholder="API anahtarınız" />
+        <div class="hint">Ücretsiz anahtar: <a href="https://www.nosyapi.com/api/nobetci-eczane" target="_blank" style="color:#7fe3a3">nosyapi.com</a></div>
+      </div>
+      <div class="field">
+        <label>Manuel Nöbetçi Eczane Adı (son çare)</label>
         <input type="text" id="manualName" />
       </div>
       <div class="field">

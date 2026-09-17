@@ -24,9 +24,16 @@ function defaultConfig() {
       cityLabel: 'Moda, Kadıköy',
     },
     slideDuration: 14,
-    campaigns: [], // { id, imageDataUrl, title, duration }
+    campaigns: [
+      { id: 'hosgeldiniz', imageDataUrl: 'assets/campaigns/hosgeldiniz.svg', title: '', duration: 12 },
+      { id: 'grip-asisi', imageDataUrl: 'assets/campaigns/grip-asisi.svg', title: '', duration: 14 },
+      { id: 'baglisiklik', imageDataUrl: 'assets/campaigns/baglisiklik.svg', title: '', duration: 14 },
+      { id: 'cilt-bakimi', imageDataUrl: 'assets/campaigns/cilt-bakimi.svg', title: '', duration: 14 },
+      { id: 'hijyen', imageDataUrl: 'assets/campaigns/hijyen.svg', title: '', duration: 14 },
+      { id: 'oksuruk-bogaz', imageDataUrl: 'assets/campaigns/oksuruk-bogaz.svg', title: '', duration: 14 },
+    ], // { id, imageDataUrl, title, duration }
     healthTips: {
-      enabled: true,
+      enabled: false,
       useBuiltIn: true,
       customTips: [],
     },
