@@ -12,12 +12,12 @@
 <body>
   <div class="admin-wrap">
     <div class="admin-header">
-      <h1>⚙️ Eczane Ekranı Ayarları</h1>
+      <h1 id="adminTitle">Eczane Ekranı Ayarları</h1>
       <a class="btn" href="index.html" target="_blank">Ekranı Aç ↗</a>
     </div>
 
     <div class="card">
-      <h2>🏪 Eczane Bilgileri</h2>
+      <h2>Eczane Bilgileri</h2>
       <div class="field">
         <label>Eczane Adı</label>
         <input type="text" id="pharmacyName" placeholder="Örn: Merkez Eczanesi" />
@@ -55,7 +55,7 @@
     </div>
 
     <div class="card">
-      <h2>🎨 Görünüm / Tema</h2>
+      <h2>Görünüm / Tema</h2>
       <div class="hint" style="margin-bottom:1.4vh">Ekranın vurgu rengini siz seçin — istediğiniz zaman değiştirebilirsiniz.</div>
       <div class="theme-row" id="themeRow"></div>
       <div class="theme-custom-row">
@@ -65,7 +65,7 @@
     </div>
 
     <div class="card">
-      <h2>🟢 Nöbetçi Eczane</h2>
+      <h2>Nöbetçi Eczane</h2>
       <div class="toggle-row">
         <label>Modülü göster</label>
         <input type="checkbox" id="dutyEnabled" />
@@ -97,7 +97,7 @@
     </div>
 
     <div class="card">
-      <h2>🌤️ Hava Durumu</h2>
+      <h2>Hava Durumu</h2>
       <div class="toggle-row">
         <label>Modülü göster</label>
         <input type="checkbox" id="weatherEnabled" />
@@ -111,7 +111,7 @@
     </div>
 
     <div class="card">
-      <h2>💊 Yerleşik Sağlık Kampanyaları</h2>
+      <h2>Yerleşik Sağlık Kampanyaları</h2>
       <div class="toggle-row">
         <label>Modülü göster (Grip aşısı, bağışıklık, cilt bakımı, hijyen, öksürük &amp; boğaz)</label>
         <input type="checkbox" id="promosEnabled" />
@@ -120,7 +120,7 @@
     </div>
 
     <div class="card">
-      <h2>📢 Kendi Kampanya Görselleriniz</h2>
+      <h2>Kendi Kampanya Görselleriniz</h2>
       <div class="hint" style="margin-bottom:1.2vh">Kendi tasarladığınız veya fotoğrafladığınız afiş/ürün görsellerini buradan ekleyebilirsiniz.</div>
       <div class="field">
         <label>Görsel Yükle</label>
@@ -141,7 +141,7 @@
     </div>
 
     <div class="card">
-      <h2>💊 Sağlık İpuçları</h2>
+      <h2>Sağlık İpuçları</h2>
       <div class="toggle-row">
         <label>Modülü göster</label>
         <input type="checkbox" id="tipsEnabled" />
@@ -161,19 +161,20 @@
     </div>
 
     <div class="card">
-      <h2>⏱️ Genel Ayarlar</h2>
+      <h2>Genel Ayarlar</h2>
       <div class="field">
         <label>Slayt Süresi (saniye)</label>
         <input type="number" id="slideDuration" min="4" />
       </div>
     </div>
 
-    <button class="btn" id="saveBtn" type="button" style="font-size:2vh; padding:1.6vh 3vw">💾 Kaydet</button>
+    <button class="btn" id="saveBtn" type="button" style="font-size:2vh; padding:1.6vh 3vw">Kaydet</button>
     <span id="saveStatus" style="margin-left:1vw; color:#7fe3a3"></span>
   </div>
 
   <script src="js/config.js"></script>
   <script src="js/themes.js"></script>
+  <script src="js/icons.js"></script>
   <script src="js/health-tips.js"></script>
   <script src="js/admin.js"></script>
 </body>

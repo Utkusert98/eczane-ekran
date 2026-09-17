@@ -3,6 +3,8 @@
 let cfg = loadConfig();
 
 document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('adminTitle').prepend(iconWrapSpan(iconGear()));
+  document.getElementById('saveBtn').prepend(iconWrapSpan(iconSave()));
   populateForm();
   renderCampaignList();
   renderTipList();
@@ -10,6 +12,13 @@ document.addEventListener('DOMContentLoaded', () => {
   applyTheme(cfg);
   bindEvents();
 });
+
+function iconWrapSpan(svg) {
+  const span = document.createElement('span');
+  span.className = 'inline-icon';
+  span.innerHTML = svg;
+  return span;
+}
 
 function populateForm() {
   document.getElementById('pharmacyName').value = cfg.pharmacy.name || '';

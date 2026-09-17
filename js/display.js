@@ -7,36 +7,37 @@ let slideQueue = [];
 let slideIndex = 0;
 let slideTimer = null;
 
-// WMO hava kodları: etiket + animasyon grubu (cond), küçük tahmin ikonları için emoji
+// WMO hava kodları: etiket + animasyon/ikon grubu (cond) — emoji kullanılmaz, weather-icons.js'teki vektör setiyle çizilir
 const WEATHER_CODES = {
-  0: { label: 'Açık', cond: 'clear', mini: '☀️' },
-  1: { label: 'Az bulutlu', cond: 'partly', mini: '🌤️' },
-  2: { label: 'Parçalı bulutlu', cond: 'partly', mini: '⛅' },
-  3: { label: 'Kapalı', cond: 'cloudy', mini: '☁️' },
-  45: { label: 'Sisli', cond: 'fog', mini: '🌫️' },
-  48: { label: 'Kırağılı sis', cond: 'fog', mini: '🌫️' },
-  51: { label: 'Hafif çiseleme', cond: 'rain', mini: '🌦️' },
-  53: { label: 'Çiseleme', cond: 'rain', mini: '🌦️' },
-  55: { label: 'Yoğun çiseleme', cond: 'rain', mini: '🌦️' },
-  61: { label: 'Hafif yağmurlu', cond: 'rain', mini: '🌧️' },
-  63: { label: 'Yağmurlu', cond: 'rain', mini: '🌧️' },
-  65: { label: 'Kuvvetli yağmur', cond: 'rain', mini: '🌧️' },
-  71: { label: 'Hafif kar', cond: 'snow', mini: '🌨️' },
-  73: { label: 'Kar yağışlı', cond: 'snow', mini: '❄️' },
-  75: { label: 'Yoğun kar', cond: 'snow', mini: '❄️' },
-  80: { label: 'Sağanak', cond: 'rain', mini: '🌦️' },
-  81: { label: 'Sağanak', cond: 'rain', mini: '🌧️' },
-  82: { label: 'Kuvvetli sağanak', cond: 'rain', mini: '🌧️' },
-  85: { label: 'Kar sağanağı', cond: 'snow', mini: '🌨️' },
-  86: { label: 'Yoğun kar sağanağı', cond: 'snow', mini: '❄️' },
-  95: { label: 'Gök gürültülü', cond: 'thunder', mini: '⛈️' },
-  96: { label: 'Dolulu fırtına', cond: 'thunder', mini: '⛈️' },
-  99: { label: 'Kuvvetli dolulu fırtına', cond: 'thunder', mini: '⛈️' },
+  0: { label: 'Açık', cond: 'clear' },
+  1: { label: 'Az bulutlu', cond: 'partly' },
+  2: { label: 'Parçalı bulutlu', cond: 'partly' },
+  3: { label: 'Kapalı', cond: 'cloudy' },
+  45: { label: 'Sisli', cond: 'fog' },
+  48: { label: 'Kırağılı sis', cond: 'fog' },
+  51: { label: 'Hafif çiseleme', cond: 'rain' },
+  53: { label: 'Çiseleme', cond: 'rain' },
+  55: { label: 'Yoğun çiseleme', cond: 'rain' },
+  61: { label: 'Hafif yağmurlu', cond: 'rain' },
+  63: { label: 'Yağmurlu', cond: 'rain' },
+  65: { label: 'Kuvvetli yağmur', cond: 'rain' },
+  71: { label: 'Hafif kar', cond: 'snow' },
+  73: { label: 'Kar yağışlı', cond: 'snow' },
+  75: { label: 'Yoğun kar', cond: 'snow' },
+  80: { label: 'Sağanak', cond: 'rain' },
+  81: { label: 'Sağanak', cond: 'rain' },
+  82: { label: 'Kuvvetli sağanak', cond: 'rain' },
+  85: { label: 'Kar sağanağı', cond: 'snow' },
+  86: { label: 'Yoğun kar sağanağı', cond: 'snow' },
+  95: { label: 'Gök gürültülü', cond: 'thunder' },
+  96: { label: 'Dolulu fırtına', cond: 'thunder' },
+  99: { label: 'Kuvvetli dolulu fırtına', cond: 'thunder' },
 };
 
 const DAY_NAMES = ['Paz', 'Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt'];
 
 function initDisplay() {
+  document.getElementById('settingsFab').innerHTML = iconGear();
   fixMobileViewport();
   applyTheme(config);
   applyPharmacyBranding();
@@ -217,24 +218,24 @@ async function fetchWeather(cfg) {
     if (!lat || !lon) return null;
     const url =
       `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}` +
-      `&current=temperature_2m,weather_code,relative_humidity_2m,apparent_temperature` +
-      `&hourly=temperature_2m,weather_code` +
+      `&current=temperature_2m,weather_code,relative_humidity_2m,apparent_temperature,is_day` +
+      `&hourly=temperature_2m,weather_code,is_day` +
       `&daily=weather_code,temperature_2m_max,temperature_2m_min,wind_speed_10m_max` +
       `&forecast_days=7&timezone=auto`;
     const res = await fetch(url);
     if (!res.ok) throw new Error('Hava durumu alınamadı: ' + res.status);
     const json = await res.json();
     const code = json.current?.weather_code ?? 0;
-    const meta = WEATHER_CODES[code] || { label: 'Bilinmiyor', cond: 'cloudy', mini: '🌡️' };
+    const meta = WEATHER_CODES[code] || { label: 'Bilinmiyor', cond: 'cloudy' };
+    const isDayNow = (json.current?.is_day ?? 1) === 1;
 
     const days = (json.daily?.time || []).map((dateStr, i) => {
       const dCode = json.daily.weather_code[i];
-      const dMeta = WEATHER_CODES[dCode] || { mini: '🌡️' };
+      const dMeta = WEATHER_CODES[dCode] || { cond: 'cloudy' };
       const d = new Date(dateStr);
       return {
         label: i === 0 ? 'Bugün' : DAY_NAMES[d.getDay()],
         cond: dMeta.cond || 'cloudy',
-        mini: dMeta.mini,
         max: Math.round(json.daily.temperature_2m_max[i]),
         min: Math.round(json.daily.temperature_2m_min[i]),
       };
@@ -249,11 +250,12 @@ async function fetchWeather(cfg) {
     for (let i = 0; i < 6 && startIdx + i < hourlyTimes.length; i++) {
       const idx = startIdx + i;
       const hCode = json.hourly.weather_code[idx];
-      const hMeta = WEATHER_CODES[hCode] || { mini: '🌡️' };
+      const hMeta = WEATHER_CODES[hCode] || { cond: 'cloudy' };
       const d = new Date(hourlyTimes[idx]);
       hours.push({
         label: i === 0 ? 'Şu An' : d.getHours() + ':00',
-        mini: hMeta.mini,
+        cond: hMeta.cond || 'cloudy',
+        isNight: (json.hourly.is_day?.[idx] ?? 1) === 0,
         temp: Math.round(json.hourly.temperature_2m[idx]),
       });
     }
@@ -270,6 +272,7 @@ async function fetchWeather(cfg) {
       code,
       label: meta.label,
       cond: meta.cond,
+      isNight: !isDayNow,
       humidity,
       feelsLike: Math.round(json.current?.apparent_temperature ?? 0),
       windMax,
@@ -403,7 +406,7 @@ function renderSlideHtml(slide) {
     case 'healthTip':
       return `
         <div class="slide healthtip-slide">
-          <div class="icon-wrap"><div class="icon-badge">💊</div></div>
+          <div class="icon-wrap"><div class="icon-badge">${iconPill()}</div></div>
           <div class="slide-title">Sağlık İpucu</div>
           <div class="healthtip-text">${escapeHtml(slide.text)}</div>
         </div>`;
@@ -419,7 +422,7 @@ function renderSlideHtml(slide) {
     default:
       return `
         <div class="slide empty-slide">
-          <div class="icon-wrap"><div class="icon-badge">🏥</div></div>
+          <div class="icon-wrap"><div class="icon-badge">${iconCross()}</div></div>
           <div class="slide-title">Eczane Ekranına Hoş Geldiniz</div>
           <div class="slide-sub">İçerik eklemek için sağ alttaki dişli simgesinden ayarlar paneline gidin.</div>
         </div>`;
@@ -462,7 +465,7 @@ function renderPromoFooter() {
     <div class="promo-footer">
       ${name ? `<span class="pf-name">${escapeHtml(name)}</span>` : ''}
       ${pharmacist ? `<span class="pf-dot">•</span><span>${escapeHtml(pharmacist)}</span>` : ''}
-      ${phone ? `<span class="pf-dot">•</span><span class="pf-phone">📞 ${escapeHtml(phone)}</span>` : ''}
+      ${phone ? `<span class="pf-dot">•</span><span class="pf-phone">${iconPhone()} ${escapeHtml(phone)}</span>` : ''}
     </div>`;
 }
 
@@ -476,7 +479,7 @@ function renderBrandSlide() {
   }
   return `
     <div class="slide brand-slide">
-      <div class="icon-wrap"><div class="icon-badge">🏪</div></div>
+      <div class="icon-wrap"><div class="icon-badge">${iconStore()}</div></div>
       <div class="slide-title">${escapeHtml(config.pharmacy.name || 'Eczanemiz')}</div>
       <div class="slide-sub">Sağlığınız için buradayız</div>
     </div>`;
@@ -493,8 +496,8 @@ function renderDutySlide(slide) {
         (p) => `
         <div class="duty-card">
           <div class="duty-name">${escapeHtml(p.name)}</div>
-          ${p.address ? `<div class="duty-detail">📍 ${escapeHtml(p.address)}</div>` : ''}
-          ${p.phone ? `<div class="duty-detail">📞 ${escapeHtml(p.phone)}</div>` : ''}
+          ${p.address ? `<div class="duty-detail">${iconPin()} ${escapeHtml(p.address)}</div>` : ''}
+          ${p.phone ? `<div class="duty-detail">${iconPhone()} ${escapeHtml(p.phone)}</div>` : ''}
         </div>`
       )
       .join('');
@@ -515,8 +518,8 @@ function renderDutySlide(slide) {
       <div class="slide-title">Nöbetçi Eczane</div>
       <div class="duty-card single">
         <div class="duty-name">${escapeHtml(dutyData.name || '')}</div>
-        ${dutyData.address ? `<div class="duty-detail">📍 ${escapeHtml(dutyData.address)}</div>` : ''}
-        ${dutyData.phone ? `<div class="duty-detail">📞 ${escapeHtml(dutyData.phone)}</div>` : ''}
+        ${dutyData.address ? `<div class="duty-detail">${iconPin()} ${escapeHtml(dutyData.address)}</div>` : ''}
+        ${dutyData.phone ? `<div class="duty-detail">${iconPhone()} ${escapeHtml(dutyData.phone)}</div>` : ''}
       </div>
     </div>`;
 }
@@ -539,7 +542,7 @@ function renderWeatherSlide() {
           (h) => `
         <div class="wh-item">
           <div class="wh-time">${escapeHtml(h.label)}</div>
-          <div class="wh-icon">${h.mini}</div>
+          <div class="wh-icon">${weatherIconSvg(h.cond, h.isNight)}</div>
           <div class="wh-temp">${h.temp}°</div>
         </div>`
         )
@@ -554,7 +557,7 @@ function renderWeatherSlide() {
           return `
           <div class="wd-row">
             <span class="wd-day">${escapeHtml(d.label)}</span>
-            <span class="wd-icon">${d.mini}</span>
+            <span class="wd-icon">${weatherIconSvg(d.cond, false)}</span>
             <span class="wd-min">${d.min}°</span>
             <div class="wd-track"><div class="wd-fill cond-fill-${d.cond}" style="left:${left}%;width:${width}%"></div></div>
             <span class="wd-max">${d.max}°</span>
@@ -566,7 +569,7 @@ function renderWeatherSlide() {
   return `
     <div class="slide weather-slide-v2">
       <div class="ws-header">
-        ${renderAnimatedWeatherIcon(weatherData.cond)}
+        ${renderAnimatedWeatherIcon(weatherData.cond, weatherData.isNight)}
         <div class="ws-temp">${weatherData.temp}°</div>
         <div class="ws-cond">${escapeHtml(weatherData.label)}${weatherData.cityLabel ? ' · ' + escapeHtml(weatherData.cityLabel) : ''}</div>
         <div class="ws-hilo">Y:${todayMax}°  D:${todayMin}°</div>
@@ -577,16 +580,18 @@ function renderWeatherSlide() {
     </div>`;
 }
 
-function renderAnimatedWeatherIcon(cond) {
+function renderAnimatedWeatherIcon(cond, isNight) {
   const drops = Array.from({ length: 6 }, () => '<span class="drop"></span>').join('');
   const flakes = Array.from({ length: 8 }, () => '<span class="flake"></span>').join('');
+  const nightCls = isNight ? ' is-night' : '';
   return `
-    <div class="weather-icon cond-${cond || 'cloudy'}">
+    <div class="weather-icon cond-${cond || 'cloudy'}${nightCls}">
       <div class="w-sun"><div class="w-sun-core"></div></div>
+      <div class="w-moon"></div>
       <div class="w-cloud w-cloud1"></div>
       <div class="w-cloud w-cloud2"></div>
       <div class="w-fog"><span></span><span></span><span></span></div>
-      <div class="w-bolt">⚡</div>
+      <div class="w-bolt"><svg viewBox="0 0 24 24"><path d="M13 2 4 14h6l-1 8 9-12h-6z" fill="#FFD166"/></svg></div>
       <div class="w-rain">${drops}</div>
       <div class="w-snow">${flakes}</div>
     </div>`;
