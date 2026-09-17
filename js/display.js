@@ -158,7 +158,22 @@ function buildSlideQueue() {
   const slides = [];
 
   if (config.duty.enabled && dutyData) {
-    slides.push({ type: 'duty', duration: config.slideDuration });
+    if (dutyData.list && dutyData.list.length) {
+      const perPage = 3;
+      const chunks = [];
+      for (let i = 0; i < dutyData.list.length; i += perPage) chunks.push(dutyData.list.slice(i, i + perPage));
+      chunks.forEach((chunk, i) => {
+        slides.push({
+          type: 'duty',
+          duration: config.slideDuration,
+          dutyChunk: chunk,
+          page: i + 1,
+          totalPages: chunks.length,
+        });
+      });
+    } else {
+      slides.push({ type: 'duty', duration: config.slideDuration });
+    }
   }
 
   if (config.weather.enabled && weatherData) {
@@ -227,7 +242,7 @@ function renderCurrentSlide() {
 function renderSlideHtml(slide) {
   switch (slide.type) {
     case 'duty':
-      return renderDutySlide();
+      return renderDutySlide(slide);
     case 'weather':
       return renderWeatherSlide();
     case 'healthTip':
@@ -254,13 +269,13 @@ function renderSlideHtml(slide) {
   }
 }
 
-function renderDutySlide() {
+function renderDutySlide(slide) {
   if (!dutyData) {
     return `<div class="slide duty-slide"><div class="slide-title">Nöbetçi Eczane</div><div class="slide-sub">Bilgi bulunamadı.</div></div>`;
   }
   const badge = `<div class="duty-badge"><span class="pulse-dot"></span>BUGÜN NÖBETÇİ</div>`;
-  if ((dutyData.source === 'api' || dutyData.source === 'auto') && dutyData.list) {
-    const items = dutyData.list
+  if (slide && slide.dutyChunk) {
+    const items = slide.dutyChunk
       .map(
         (p) => `
         <div class="duty-card">
@@ -270,11 +285,15 @@ function renderDutySlide() {
         </div>`
       )
       .join('');
+    const pager = slide.totalPages > 1
+      ? `<div class="duty-pager">${slide.page} / ${slide.totalPages}</div>`
+      : '';
     return `
       <div class="slide duty-slide">
         ${badge}
         <div class="slide-title">Nöbetçi Eczaneler</div>
         <div class="duty-list">${items}</div>
+        ${pager}
       </div>`;
   }
   return `

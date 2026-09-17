@@ -253,6 +253,13 @@ html, body {
   margin-top: 0.6vh;
 }
 
+.duty-pager {
+  font-size: clamp(12px, 1.8vh, 18px);
+  color: var(--text-dim);
+  letter-spacing: 2px;
+  opacity: 0.7;
+}
+
 /* hava durumu */
 .weather-temp {
   font-size: clamp(56px, 15vh, 150px);
