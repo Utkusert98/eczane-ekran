@@ -1,0 +1,359 @@
+:root {
+  --primary: #0f9d58;
+  --primary-dark: #0b7a43;
+  --accent: #1565c0;
+  --bg: #0b1220;
+  --card-bg: rgba(255, 255, 255, 0.06);
+  --text: #f5f7fa;
+  --text-dim: #b7c0cc;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+}
+
+/* ---------- Ekran (display) ---------- */
+
+.screen {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+  background: radial-gradient(circle at top left, #14243d 0%, #0b1220 60%);
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 2vh 3vw;
+  background: rgba(0, 0, 0, 0.25);
+  border-bottom: 2px solid var(--primary);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 1.2vw;
+}
+
+.brand img {
+  height: 6vh;
+  max-width: 12vw;
+  object-fit: contain;
+  border-radius: 8px;
+  background: #fff;
+  padding: 4px;
+}
+
+.brand-name {
+  font-size: 2.6vh;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.time-block {
+  text-align: right;
+}
+
+.clock {
+  font-size: 4vh;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.date-label {
+  font-size: 1.8vh;
+  color: var(--text-dim);
+  margin-top: 0.5vh;
+}
+
+.stage {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3vh 4vw;
+  opacity: 0;
+}
+
+.stage.fade-in {
+  animation: fadeIn 0.6s ease forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.slide {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 2vh;
+}
+
+.slide-title {
+  font-size: 3.4vh;
+  font-weight: 700;
+}
+
+.slide-sub {
+  font-size: 2vh;
+  color: var(--text-dim);
+}
+
+.slide-icon {
+  font-size: 6vh;
+}
+
+/* nöbetçi eczane */
+.duty-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5vh 2vw;
+  width: 100%;
+  max-width: 1100px;
+}
+
+.duty-card {
+  background: var(--card-bg);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  padding: 2.2vh 2vw;
+  text-align: left;
+}
+
+.duty-card.single {
+  max-width: 600px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.duty-name {
+  font-size: 2.6vh;
+  font-weight: 700;
+  color: #7fe3a3;
+  margin-bottom: 1vh;
+}
+
+.duty-detail {
+  font-size: 1.9vh;
+  color: var(--text-dim);
+  margin-top: 0.4vh;
+}
+
+/* hava durumu */
+.weather-icon { font-size: 9vh; }
+.weather-temp { font-size: 6vh; font-weight: 700; }
+.weather-label { font-size: 2.4vh; color: var(--text-dim); }
+.weather-city { font-size: 2vh; color: var(--text-dim); }
+
+/* sağlık ipucu */
+.healthtip-text {
+  font-size: 3vh;
+  max-width: 900px;
+  line-height: 1.5;
+}
+
+/* kampanya */
+.campaign-slide {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.campaign-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 12px;
+}
+
+.campaign-title {
+  position: absolute;
+  bottom: 2vh;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.6);
+  padding: 1vh 2vw;
+  border-radius: 10px;
+  font-size: 2.2vh;
+}
+
+.settings-fab {
+  position: fixed;
+  bottom: 2vh;
+  right: 2vw;
+  width: 5vh;
+  height: 5vh;
+  min-width: 36px;
+  min-height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  font-size: 2.4vh;
+  color: var(--text-dim);
+  opacity: 0.35;
+  transition: opacity 0.2s;
+}
+
+.settings-fab:hover { opacity: 1; }
+
+/* ---------- Admin ---------- */
+
+.admin-wrap {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 4vh 4vw 8vh;
+  overflow-y: auto;
+  height: 100vh;
+}
+
+.admin-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 3vh;
+}
+
+.admin-header h1 {
+  font-size: 2.6vh;
+  margin: 0;
+}
+
+.btn {
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  padding: 1.2vh 2vw;
+  border-radius: 8px;
+  font-size: 1.7vh;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.btn:hover { background: var(--primary-dark); }
+
+.btn.secondary {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.btn.danger {
+  background: #c0392b;
+}
+
+.card {
+  background: var(--card-bg);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  padding: 2.5vh 2.5vw;
+  margin-bottom: 2.5vh;
+}
+
+.card h2 {
+  font-size: 2vh;
+  margin: 0 0 1.8vh;
+  display: flex;
+  align-items: center;
+  gap: 0.6vw;
+}
+
+.field {
+  margin-bottom: 1.6vh;
+}
+
+.field label {
+  display: block;
+  font-size: 1.5vh;
+  color: var(--text-dim);
+  margin-bottom: 0.5vh;
+}
+
+.field input[type="text"],
+.field input[type="number"],
+.field input[type="password"],
+.field textarea,
+.field select {
+  width: 100%;
+  padding: 1.2vh 1vw;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(0, 0, 0, 0.3);
+  color: var(--text);
+  font-size: 1.6vh;
+}
+
+.field-row {
+  display: flex;
+  gap: 1.5vw;
+}
+
+.field-row .field { flex: 1; }
+
+.toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.6vh;
+}
+
+.hint {
+  font-size: 1.3vh;
+  color: var(--text-dim);
+  margin-top: 0.5vh;
+}
+
+.status-msg {
+  font-size: 1.4vh;
+  margin-top: 1vh;
+  padding: 1vh 1vw;
+  border-radius: 8px;
+}
+
+.status-msg.ok { background: rgba(15, 157, 88, 0.2); color: #7fe3a3; }
+.status-msg.err { background: rgba(192, 57, 43, 0.2); color: #ff9b8f; }
+
+.campaign-item, .tip-item {
+  display: flex;
+  align-items: center;
+  gap: 1vw;
+  background: rgba(0, 0, 0, 0.25);
+  padding: 1vh 1vw;
+  border-radius: 10px;
+  margin-bottom: 1vh;
+}
+
+.campaign-item img {
+  width: 8vh;
+  height: 8vh;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.campaign-item .meta { flex: 1; }
+.tip-item { justify-content: space-between; }
+
+.pill {
+  background: rgba(255,255,255,0.1);
+  border-radius: 999px;
+  padding: 0.4vh 1vw;
+  font-size: 1.3vh;
+}

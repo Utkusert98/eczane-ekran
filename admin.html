@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Eczane Ekranı - Ayarlar</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="admin-wrap">
+    <div class="admin-header">
+      <h1>⚙️ Eczane Ekranı Ayarları</h1>
+      <a class="btn" href="index.html" target="_blank">Ekranı Aç ↗</a>
+    </div>
+
+    <div class="card">
+      <h2>🏪 Eczane Bilgileri</h2>
+      <div class="field">
+        <label>Eczane Adı</label>
+        <input type="text" id="pharmacyName" placeholder="Örn: Merkez Eczanesi" />
+      </div>
+      <div class="field">
+        <label>Logo (opsiyonel, görsel yükleyin)</label>
+        <input type="file" id="logoFile" accept="image/*" />
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>İl (nöbetçi eczane API için)</label>
+          <input type="text" id="city" placeholder="örn: ankara" />
+        </div>
+        <div class="field">
+          <label>İlçe</label>
+          <input type="text" id="district" placeholder="örn: cankaya" />
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>🟢 Nöbetçi Eczane</h2>
+      <div class="toggle-row">
+        <label>Modülü göster</label>
+        <input type="checkbox" id="dutyEnabled" />
+      </div>
+      <div class="field">
+        <label>NosyAPI Anahtarı (opsiyonel — otomatik çekim için)</label>
+        <input type="password" id="dutyApiKey" placeholder="API anahtarınız" />
+        <div class="hint">Ücretsiz anahtar: <a href="https://www.nosyapi.com/api/nobetci-eczane" target="_blank" style="color:#7fe3a3">nosyapi.com</a>. Girilmezse aşağıdaki manuel bilgiler gösterilir.</div>
+      </div>
+      <button class="btn secondary" id="testDutyBtn" type="button">API'yi Test Et</button>
+      <div id="dutyStatus"></div>
+      <hr style="border-color:rgba(255,255,255,0.1); margin:2vh 0" />
+      <div class="field">
+        <label>Manuel Nöbetçi Eczane Adı (API yoksa)</label>
+        <input type="text" id="manualName" />
+      </div>
+      <div class="field">
+        <label>Adres</label>
+        <input type="text" id="manualAddress" />
+      </div>
+      <div class="field">
+        <label>Telefon</label>
+        <input type="text" id="manualPhone" />
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>🌤️ Hava Durumu</h2>
+      <div class="toggle-row">
+        <label>Modülü göster</label>
+        <input type="checkbox" id="weatherEnabled" />
+      </div>
+      <div class="field">
+        <label>Şehir Ara (Open-Meteo, ücretsiz, API key gerekmez)</label>
+        <input type="text" id="weatherSearch" placeholder="örn: İstanbul" />
+        <button class="btn secondary" id="weatherSearchBtn" type="button" style="margin-top:1vh">Ara ve Seç</button>
+      </div>
+      <div id="weatherStatus" class="hint"></div>
+    </div>
+
+    <div class="card">
+      <h2>📢 Kampanya / Ürün Slaytları</h2>
+      <div class="field">
+        <label>Görsel Yükle</label>
+        <input type="file" id="campaignFile" accept="image/*" />
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Başlık (opsiyonel)</label>
+          <input type="text" id="campaignTitle" placeholder="örn: Kış Vitamin Kampanyası" />
+        </div>
+        <div class="field">
+          <label>Süre (saniye)</label>
+          <input type="number" id="campaignDuration" min="3" value="14" />
+        </div>
+      </div>
+      <button class="btn" id="addCampaignBtn" type="button">Slayt Ekle</button>
+      <div id="campaignList" style="margin-top:2vh"></div>
+    </div>
+
+    <div class="card">
+      <h2>💊 Sağlık İpuçları</h2>
+      <div class="toggle-row">
+        <label>Modülü göster</label>
+        <input type="checkbox" id="tipsEnabled" />
+      </div>
+      <div class="toggle-row">
+        <label>Hazır ipucu bankasını kullan (20 kart)</label>
+        <input type="checkbox" id="tipsBuiltIn" />
+      </div>
+      <div class="field">
+        <label>Kendi ipucunuzu ekleyin</label>
+        <div class="field-row">
+          <input type="text" id="customTipInput" placeholder="Kısa sağlık bilgisi yazın..." />
+          <button class="btn secondary" id="addTipBtn" type="button" style="flex:0 0 auto">Ekle</button>
+        </div>
+      </div>
+      <div id="tipList"></div>
+    </div>
+
+    <div class="card">
+      <h2>⏱️ Genel Ayarlar</h2>
+      <div class="field">
+        <label>Slayt Süresi (saniye)</label>
+        <input type="number" id="slideDuration" min="4" />
+      </div>
+    </div>
+
+    <button class="btn" id="saveBtn" type="button" style="font-size:2vh; padding:1.6vh 3vw">💾 Kaydet</button>
+    <span id="saveStatus" style="margin-left:1vw; color:#7fe3a3"></span>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/health-tips.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>
