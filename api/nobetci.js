@@ -8,6 +8,13 @@ const UA = 'Mozilla/5.0 (compatible; EczaneEkraniBot/1.0; +https://eczane-ekran.
 module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   const ilce = (req.query.ilce || 'Kadıköy').toString();
+  // Büyük ilçelerde nöbet birden fazla bölgeye (semt) göre değişir.
+  // "semt" verilirse sadece o bölge/mahalleye ait eczaneler döner (örn. Kadıköy/Merkez -> Caferağa).
+  const semtFilter = (req.query.semt || '')
+    .toString()
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean);
 
   try {
     const pageRes = await fetch(SOURCE_PAGE, { headers: { 'User-Agent': UA } });
@@ -29,8 +36,10 @@ module.exports = async (req, res) => {
       throw new Error('Kaynak beklenmeyen yanıt döndürdü');
     }
 
+    const normalizedSemtFilter = semtFilter.map(normalize);
     const pharmacies = json.eczaneler
       .filter((e) => normalize(e.ilce) === normalize(ilce))
+      .filter((e) => !normalizedSemtFilter.length || normalizedSemtFilter.includes(normalize(e.semt)))
       .map((e) => ({
         name: e.eczane_ad || '',
         phone: formatPhone(e.eczane_tel),

@@ -13,6 +13,7 @@ function populateForm() {
   document.getElementById('pharmacyName').value = cfg.pharmacy.name || '';
   document.getElementById('city').value = cfg.pharmacy.city || '';
   document.getElementById('district').value = cfg.pharmacy.district || '';
+  document.getElementById('semt').value = cfg.pharmacy.semt || '';
 
   document.getElementById('dutyEnabled').checked = cfg.duty.enabled;
   document.getElementById('dutyApiKey').value = cfg.duty.apiKey || '';
@@ -54,6 +55,7 @@ function readFormIntoCfg() {
   cfg.pharmacy.name = document.getElementById('pharmacyName').value.trim();
   cfg.pharmacy.city = document.getElementById('city').value.trim();
   cfg.pharmacy.district = document.getElementById('district').value.trim();
+  cfg.pharmacy.semt = document.getElementById('semt').value.trim();
 
   cfg.duty.enabled = document.getElementById('dutyEnabled').checked;
   cfg.duty.apiKey = document.getElementById('dutyApiKey').value.trim();
@@ -92,6 +94,7 @@ async function testDutyApi() {
   statusEl.textContent = 'Test ediliyor...';
 
   const district = document.getElementById('district').value.trim();
+  const semt = document.getElementById('semt').value.trim();
   if (!district) {
     statusEl.className = 'status-msg err';
     statusEl.textContent = 'Önce yukarıya ilçenizi yazın (örn. Kadıköy).';
@@ -99,7 +102,9 @@ async function testDutyApi() {
   }
 
   try {
-    const res = await fetch('/api/nobetci?ilce=' + encodeURIComponent(district));
+    let url = '/api/nobetci?ilce=' + encodeURIComponent(district);
+    if (semt) url += '&semt=' + encodeURIComponent(semt);
+    const res = await fetch(url);
     const json = await res.json();
     if (json.status !== 'ok') throw new Error(json.message || 'Kaynak yanıt vermedi');
     if (!json.pharmacies.length) {

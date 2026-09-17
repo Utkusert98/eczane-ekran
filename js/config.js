@@ -9,6 +9,7 @@ function defaultConfig() {
       logoDataUrl: '',
       city: 'istanbul',
       district: 'kadikoy',
+      semt: 'Caferağa', // Kadıköy/Merkez nöbet bölgesi
     },
     duty: {
       enabled: true,
@@ -25,7 +26,6 @@ function defaultConfig() {
     },
     slideDuration: 14,
     campaigns: [
-      { id: 'hosgeldiniz', imageDataUrl: 'assets/campaigns/hosgeldiniz.svg', title: '', duration: 12 },
       { id: 'grip-asisi', imageDataUrl: 'assets/campaigns/grip-asisi.svg', title: '', duration: 14 },
       { id: 'baglisiklik', imageDataUrl: 'assets/campaigns/baglisiklik.svg', title: '', duration: 14 },
       { id: 'cilt-bakimi', imageDataUrl: 'assets/campaigns/cilt-bakimi.svg', title: '', duration: 14 },

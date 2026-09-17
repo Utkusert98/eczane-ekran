@@ -81,7 +81,9 @@ async function fetchDutyPharmacy(cfg) {
   // 1) Ücretsiz, anahtarsız kaynak: İstanbul Eczacı Odası (kendi sunucu fonksiyonumuz üzerinden, CORS'suz)
   if (cfg.pharmacy.district) {
     try {
-      const res = await fetch('/api/nobetci?ilce=' + encodeURIComponent(cfg.pharmacy.district));
+      let url = '/api/nobetci?ilce=' + encodeURIComponent(cfg.pharmacy.district);
+      if (cfg.pharmacy.semt) url += '&semt=' + encodeURIComponent(cfg.pharmacy.semt);
+      const res = await fetch(url);
       if (res.ok) {
         const json = await res.json();
         if (json.status === 'ok' && Array.isArray(json.pharmacies) && json.pharmacies.length) {
@@ -156,6 +158,8 @@ async function fetchWeather(cfg) {
 
 function buildSlideQueue() {
   const slides = [];
+
+  slides.push({ type: 'brand', duration: config.slideDuration });
 
   if (config.duty.enabled && dutyData) {
     if (dutyData.list && dutyData.list.length) {
@@ -241,6 +245,8 @@ function renderCurrentSlide() {
 
 function renderSlideHtml(slide) {
   switch (slide.type) {
+    case 'brand':
+      return renderBrandSlide();
     case 'duty':
       return renderDutySlide(slide);
     case 'weather':
@@ -267,6 +273,22 @@ function renderSlideHtml(slide) {
           <div class="slide-sub">İçerik eklemek için sağ alttaki dişli simgesinden ayarlar paneline gidin.</div>
         </div>`;
   }
+}
+
+function renderBrandSlide() {
+  if (config.pharmacy.logoDataUrl) {
+    return `
+      <div class="slide brand-slide">
+        <img class="brand-logo-large" src="${config.pharmacy.logoDataUrl}" alt="${escapeHtml(config.pharmacy.name || '')}" />
+        <div class="slide-sub">Sağlığınız için buradayız</div>
+      </div>`;
+  }
+  return `
+    <div class="slide brand-slide">
+      <div class="icon-badge teal">🏪</div>
+      <div class="slide-title">${escapeHtml(config.pharmacy.name || 'Eczanemiz')}</div>
+      <div class="slide-sub">Sağlığınız için buradayız</div>
+    </div>`;
 }
 
 function renderDutySlide(slide) {

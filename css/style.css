@@ -352,6 +352,13 @@ html, body {
 
 .empty-slide .slide-title { font-size: clamp(20px, 3.6vmin, 40px); }
 
+.brand-logo-large {
+  max-width: min(72vw, 560px);
+  max-height: 55vh;
+  object-fit: contain;
+  filter: drop-shadow(0 12px 40px rgba(0, 0, 0, 0.45));
+}
+
 /* ---------- Admin ---------- */
 
 .admin-wrap {
@@ -492,4 +499,65 @@ html, body {
   border-radius: 999px;
   padding: 0.4vh 1vw;
   font-size: 1.3vh;
+}
+
+/* ---------- Admin: telefon / dar ekran ---------- */
+@media (max-width: 640px) {
+  .admin-wrap {
+    padding: 20px 16px 60px;
+    height: auto;
+    min-height: 100vh;
+  }
+
+  .admin-header {
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .admin-header h1 { font-size: 20px; }
+
+  .card { padding: 18px 16px; margin-bottom: 16px; border-radius: 12px; }
+  .card h2 { font-size: 17px; margin-bottom: 14px; }
+
+  .field { margin-bottom: 14px; }
+  .field label { font-size: 13px; margin-bottom: 6px; }
+
+  .field input[type="text"],
+  .field input[type="number"],
+  .field input[type="password"],
+  .field textarea,
+  .field select {
+    font-size: 16px; /* iOS'ta otomatik yakınlaştırmayı engeller */
+    padding: 12px 12px;
+  }
+
+  .field-row {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .toggle-row {
+    padding: 4px 0;
+  }
+  .toggle-row label { font-size: 15px; }
+  .toggle-row input[type="checkbox"] {
+    width: 22px;
+    height: 22px;
+  }
+
+  .btn {
+    font-size: 15px;
+    padding: 12px 18px;
+    min-height: 44px;
+  }
+
+  .hint { font-size: 12.5px; line-height: 1.5; }
+  .status-msg { font-size: 13px; }
+
+  .campaign-item, .tip-item {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .campaign-item img { width: 56px; height: 56px; }
 }
