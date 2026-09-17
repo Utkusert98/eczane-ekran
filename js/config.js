@@ -24,6 +24,11 @@ function defaultConfig() {
       lon: 29.0339,
       cityLabel: 'Moda, Kadıköy',
     },
+    theme: {
+      preset: 'mavi',
+      accent: '',  // boşsa preset rengi kullanılır; admin panelinden özel renk seçilebilir
+      accent2: '',
+    },
     slideDuration: 14,
     campaigns: [
       { id: 'grip-asisi', imageDataUrl: 'assets/campaigns/grip-asisi.svg', title: '', duration: 14 },

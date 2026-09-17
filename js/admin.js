@@ -6,6 +6,8 @@ document.addEventListener('DOMContentLoaded', () => {
   populateForm();
   renderCampaignList();
   renderTipList();
+  renderThemeRow();
+  applyTheme(cfg);
   bindEvents();
 });
 
@@ -48,7 +50,41 @@ function bindEvents() {
 
   document.getElementById('addTipBtn').addEventListener('click', addCustomTip);
 
+  document.getElementById('customAccent').addEventListener('input', (e) => {
+    cfg.theme = { preset: 'custom', accent: e.target.value, accent2: lightenColor(e.target.value, 0.35) };
+    applyTheme(cfg);
+    renderThemeRow();
+  });
+
   document.getElementById('saveBtn').addEventListener('click', saveAll);
+}
+
+function renderThemeRow() {
+  const row = document.getElementById('themeRow');
+  row.innerHTML = Object.entries(THEME_PRESETS)
+    .map(([key, t]) => {
+      const selected = cfg.theme.preset === key ? 'selected' : '';
+      return `<div class="theme-swatch ${selected}" data-preset="${key}" title="${t.label}"
+        style="background: linear-gradient(135deg, ${t.accent}, ${t.accent2})"></div>`;
+    })
+    .join('');
+
+  row.querySelectorAll('.theme-swatch').forEach((el) => {
+    el.addEventListener('click', () => {
+      cfg.theme = { preset: el.dataset.preset, accent: '', accent2: '' };
+      applyTheme(cfg);
+      renderThemeRow();
+    });
+  });
+}
+
+function lightenColor(hex, amount) {
+  const h = hex.replace('#', '');
+  const r = parseInt(h.substring(0, 2), 16);
+  const g = parseInt(h.substring(2, 4), 16);
+  const b = parseInt(h.substring(4, 6), 16);
+  const mix = (c) => Math.round(c + (255 - c) * amount);
+  return `#${[mix(r), mix(g), mix(b)].map((v) => v.toString(16).padStart(2, '0')).join('')}`;
 }
 
 function readFormIntoCfg() {

@@ -26,6 +26,7 @@ const WEATHER_CODES = {
 };
 
 function initDisplay() {
+  applyTheme(config);
   applyPharmacyBranding();
   startClock();
   refreshDynamicData();
@@ -35,6 +36,7 @@ function initDisplay() {
   setInterval(() => {
     // ayarlar başka sekmede değiştiyse ekranı canlı güncelle
     config = loadConfig();
+    applyTheme(config);
   }, 5000);
 }
 
@@ -202,6 +204,7 @@ function buildSlideQueue() {
 
   slideQueue = slides;
   if (slideIndex >= slideQueue.length) slideIndex = 0;
+  renderDots();
 }
 
 function rotateSlides() {
@@ -213,7 +216,7 @@ function scheduleNext() {
   clearTimeout(slideTimer);
   const current = slideQueue[slideIndex] || { duration: config.slideDuration };
   const duration = current.duration || config.slideDuration;
-  runProgressBar(duration);
+  runDotProgress(duration);
   slideTimer = setTimeout(() => {
     slideIndex = (slideIndex + 1) % slideQueue.length;
     renderCurrentSlide();
@@ -221,14 +224,30 @@ function scheduleNext() {
   }, duration * 1000);
 }
 
-function runProgressBar(durationSeconds) {
-  const fill = document.getElementById('progressFill');
-  if (!fill) return;
-  fill.style.transition = 'none';
-  fill.style.width = '0%';
-  void fill.offsetWidth;
-  fill.style.transition = `width ${durationSeconds}s linear`;
-  fill.style.width = '100%';
+function renderDots() {
+  const row = document.getElementById('dotsRow');
+  if (!row) return;
+  row.innerHTML = slideQueue.map(() => `<span class="dot"><span class="dot-fill"></span></span>`).join('');
+}
+
+function runDotProgress(durationSeconds) {
+  const row = document.getElementById('dotsRow');
+  if (!row) return;
+  const dots = row.querySelectorAll('.dot');
+  dots.forEach((dot, i) => {
+    dot.classList.toggle('active', i === slideIndex);
+    const fill = dot.querySelector('.dot-fill');
+    if (i === slideIndex) {
+      fill.style.transition = 'none';
+      fill.style.width = '0%';
+      void fill.offsetWidth;
+      fill.style.transition = `width ${durationSeconds}s linear`;
+      fill.style.width = '100%';
+    } else {
+      fill.style.transition = 'none';
+      fill.style.width = i < slideIndex ? '100%' : '0%';
+    }
+  });
 }
 
 function renderCurrentSlide() {
@@ -254,7 +273,7 @@ function renderSlideHtml(slide) {
     case 'healthTip':
       return `
         <div class="slide healthtip-slide">
-          <div class="icon-badge coral">💊</div>
+          <div class="icon-wrap"><div class="icon-badge">💊</div></div>
           <div class="slide-title">Sağlık İpucu</div>
           <div class="healthtip-text">${escapeHtml(slide.text)}</div>
         </div>`;
@@ -268,7 +287,7 @@ function renderSlideHtml(slide) {
     default:
       return `
         <div class="slide empty-slide">
-          <div class="icon-badge teal">🏥</div>
+          <div class="icon-wrap"><div class="icon-badge">🏥</div></div>
           <div class="slide-title">Eczane Ekranına Hoş Geldiniz</div>
           <div class="slide-sub">İçerik eklemek için sağ alttaki dişli simgesinden ayarlar paneline gidin.</div>
         </div>`;
@@ -285,7 +304,7 @@ function renderBrandSlide() {
   }
   return `
     <div class="slide brand-slide">
-      <div class="icon-badge teal">🏪</div>
+      <div class="icon-wrap"><div class="icon-badge">🏪</div></div>
       <div class="slide-title">${escapeHtml(config.pharmacy.name || 'Eczanemiz')}</div>
       <div class="slide-sub">Sağlığınız için buradayız</div>
     </div>`;
@@ -334,7 +353,7 @@ function renderWeatherSlide() {
   if (!weatherData) return '';
   return `
     <div class="slide weather-slide">
-      <div class="icon-badge sky">${weatherData.icon}</div>
+      <div class="icon-wrap"><div class="icon-badge">${weatherData.icon}</div></div>
       <div class="weather-temp">${weatherData.temp}°C</div>
       <div class="weather-label">${escapeHtml(weatherData.label)}</div>
       ${weatherData.cityLabel ? `<div class="weather-city">${escapeHtml(weatherData.cityLabel)}</div>` : ''}
