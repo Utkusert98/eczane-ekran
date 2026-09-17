@@ -45,11 +45,61 @@ function initDisplay() {
   setInterval(refreshDynamicData, 20 * 60 * 1000); // 20 dakikada bir yenile
   buildSlideQueue();
   rotateSlides();
+  initSwipeNav();
   setInterval(() => {
     // ayarlar başka sekmede değiştiyse ekranı canlı güncelle
     config = loadConfig();
     applyTheme(config);
   }, 5000);
+}
+
+function goToSlide(i) {
+  const n = slideQueue.length;
+  if (!n) return;
+  slideIndex = ((i % n) + n) % n;
+  clearTimeout(slideTimer);
+  renderCurrentSlide();
+  scheduleNext();
+}
+
+function initSwipeNav() {
+  const el = document.querySelector('.screen');
+  let startX = 0;
+  let startY = 0;
+  let tracking = false;
+
+  el.addEventListener(
+    'touchstart',
+    (e) => {
+      if (e.touches.length !== 1) return;
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+      tracking = true;
+    },
+    { passive: true }
+  );
+
+  el.addEventListener(
+    'touchend',
+    (e) => {
+      if (!tracking) return;
+      tracking = false;
+      const dx = e.changedTouches[0].clientX - startX;
+      const dy = e.changedTouches[0].clientY - startY;
+      if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy) * 1.2) {
+        goToSlide(slideIndex + (dx < 0 ? 1 : -1));
+      }
+    },
+    { passive: true }
+  );
+
+  // fare/dokunmatik olmayan cihazlarda test ve kolaylık için: ekranın sol/sağ üçte biri de geçiş yapar
+  el.addEventListener('click', (e) => {
+    if (e.target.closest('.settings-fab')) return;
+    const w = window.innerWidth;
+    if (e.clientX < w * 0.28) goToSlide(slideIndex - 1);
+    else if (e.clientX > w * 0.72) goToSlide(slideIndex + 1);
+  });
 }
 
 function fixMobileViewport() {
@@ -168,8 +218,9 @@ async function fetchWeather(cfg) {
     const url =
       `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}` +
       `&current=temperature_2m,weather_code,relative_humidity_2m,apparent_temperature` +
-      `&daily=weather_code,temperature_2m_max,temperature_2m_min` +
-      `&forecast_days=6&timezone=auto`;
+      `&hourly=temperature_2m,weather_code` +
+      `&daily=weather_code,temperature_2m_max,temperature_2m_min,wind_speed_10m_max` +
+      `&forecast_days=7&timezone=auto`;
     const res = await fetch(url);
     if (!res.ok) throw new Error('Hava durumu alınamadı: ' + res.status);
     const json = await res.json();
@@ -182,20 +233,49 @@ async function fetchWeather(cfg) {
       const d = new Date(dateStr);
       return {
         label: i === 0 ? 'Bugün' : DAY_NAMES[d.getDay()],
+        cond: dMeta.cond || 'cloudy',
         mini: dMeta.mini,
         max: Math.round(json.daily.temperature_2m_max[i]),
         min: Math.round(json.daily.temperature_2m_min[i]),
       };
     });
 
+    // saatlik: şimdiden itibaren sonraki 6 saat
+    const hourlyTimes = json.hourly?.time || [];
+    const now = new Date();
+    let startIdx = hourlyTimes.findIndex((t) => new Date(t) >= now);
+    if (startIdx < 0) startIdx = 0;
+    const hours = [];
+    for (let i = 0; i < 6 && startIdx + i < hourlyTimes.length; i++) {
+      const idx = startIdx + i;
+      const hCode = json.hourly.weather_code[idx];
+      const hMeta = WEATHER_CODES[hCode] || { mini: '🌡️' };
+      const d = new Date(hourlyTimes[idx]);
+      hours.push({
+        label: i === 0 ? 'Şu An' : d.getHours() + ':00',
+        mini: hMeta.mini,
+        temp: Math.round(json.hourly.temperature_2m[idx]),
+      });
+    }
+
+    const windMax = Math.round(json.daily?.wind_speed_10m_max?.[0] ?? 0);
+    const humidity = Math.round(json.current?.relative_humidity_2m ?? 0);
+    const condWord = {
+      clear: 'açık', partly: 'parçalı bulutlu', cloudy: 'kapalı',
+      fog: 'sisli', rain: 'yağmurlu', snow: 'karlı', thunder: 'fırtınalı',
+    }[meta.cond] || 'değişken';
+
     return {
       temp: Math.round(json.current?.temperature_2m ?? 0),
       code,
       label: meta.label,
       cond: meta.cond,
-      humidity: Math.round(json.current?.relative_humidity_2m ?? 0),
+      humidity,
       feelsLike: Math.round(json.current?.apparent_temperature ?? 0),
+      windMax,
+      summary: `Bugün ${condWord} hava bekleniyor. ${windMax} km/sa hızına varan rüzgarlar, nem %${humidity}.`,
       cityLabel: cfg.weather.cityLabel || '',
+      hours,
       days,
     };
   } catch (e) {
@@ -349,6 +429,7 @@ function renderSlideHtml(slide) {
 function renderPromoSlide(promo) {
   const gid = 'g_' + promo.id;
   const footer = renderPromoFooter();
+  const tag = promo.tag ? `<div class="promo-tag">${escapeHtml(promo.tag)}</div>` : '';
   if (promo.layout === 'person') {
     return `
       <div class="slide promo-slide promo-person-layout">
@@ -365,7 +446,7 @@ function renderPromoSlide(promo) {
   }
   return `
     <div class="slide promo-slide">
-      <div class="promo-icon-wrap">${promo.icon(gid)}</div>
+      <div class="promo-icon-wrap">${tag}${promo.icon(gid)}</div>
       <div class="promo-headline">${escapeHtml(promo.headline)}</div>
       <div class="promo-sub">${escapeHtml(promo.sub)}</div>
       ${footer}
@@ -443,31 +524,56 @@ function renderDutySlide(slide) {
 function renderWeatherSlide() {
   if (!weatherData) return '';
   const days = weatherData.days || [];
+  const hours = weatherData.hours || [];
+
+  const todayMax = days[0] ? days[0].max : weatherData.temp;
+  const todayMin = days[0] ? days[0].min : weatherData.temp;
+
+  const weekMax = days.length ? Math.max(...days.map((d) => d.max)) : todayMax;
+  const weekMin = days.length ? Math.min(...days.map((d) => d.min)) : todayMin;
+  const span = Math.max(1, weekMax - weekMin);
+
+  const hourlyHtml = hours.length
+    ? `<div class="ws-hourly">${hours
+        .map(
+          (h) => `
+        <div class="wh-item">
+          <div class="wh-time">${escapeHtml(h.label)}</div>
+          <div class="wh-icon">${h.mini}</div>
+          <div class="wh-temp">${h.temp}°</div>
+        </div>`
+        )
+        .join('')}</div>`
+    : '';
+
+  const dailyHtml = days.length
+    ? `<div class="ws-daily">${days
+        .map((d) => {
+          const left = ((d.min - weekMin) / span) * 100;
+          const width = Math.max(8, ((d.max - d.min) / span) * 100);
+          return `
+          <div class="wd-row">
+            <span class="wd-day">${escapeHtml(d.label)}</span>
+            <span class="wd-icon">${d.mini}</span>
+            <span class="wd-min">${d.min}°</span>
+            <div class="wd-track"><div class="wd-fill cond-fill-${d.cond}" style="left:${left}%;width:${width}%"></div></div>
+            <span class="wd-max">${d.max}°</span>
+          </div>`;
+        })
+        .join('')}</div>`
+    : '';
+
   return `
-    <div class="slide weather-slide">
-      ${renderAnimatedWeatherIcon(weatherData.cond)}
-      <div class="weather-temp">${weatherData.temp}°</div>
-      <div class="weather-label">${escapeHtml(weatherData.label)}${weatherData.cityLabel ? ' · ' + escapeHtml(weatherData.cityLabel) : ''}</div>
-      <div class="weather-stats">
-        <div class="w-stat"><span class="w-stat-label">Hissedilen</span><span class="w-stat-value">${weatherData.feelsLike}°</span></div>
-        <div class="w-stat-sep"></div>
-        <div class="w-stat"><span class="w-stat-label">Nem</span><span class="w-stat-value">%${weatherData.humidity}</span></div>
+    <div class="slide weather-slide-v2">
+      <div class="ws-header">
+        ${renderAnimatedWeatherIcon(weatherData.cond)}
+        <div class="ws-temp">${weatherData.temp}°</div>
+        <div class="ws-cond">${escapeHtml(weatherData.label)}${weatherData.cityLabel ? ' · ' + escapeHtml(weatherData.cityLabel) : ''}</div>
+        <div class="ws-hilo">Y:${todayMax}°  D:${todayMin}°</div>
       </div>
-      ${
-        days.length
-          ? `<div class="forecast-strip">${days
-              .map(
-                (d) => `
-              <div class="forecast-day">
-                <div class="fd-label">${escapeHtml(d.label)}</div>
-                <div class="fd-icon">${d.mini}</div>
-                <div class="fd-max">${d.max}°</div>
-                <div class="fd-min">${d.min}°</div>
-              </div>`
-              )
-              .join('')}</div>`
-          : ''
-      }
+      <div class="ws-summary">${escapeHtml(weatherData.summary || '')}</div>
+      ${hourlyHtml}
+      ${dailyHtml}
     </div>`;
 }
 
